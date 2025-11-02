@@ -1,0 +1,180 @@
+import java.io.*;
+import java.util.*;
+
+public class FileOperationsAndVowelCounter {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int choice;
+
+        while (true) {
+            System.out.println("\n========= FILE MANAGEMENT SYSTEM =========");
+            System.out.println("1. Create a new file");
+            System.out.println("2. Rename a file");
+            System.out.println("3. Delete a file");
+            System.out.println("4. Create a directory");
+            System.out.println("5. Find absolute path of a file");
+            System.out.println("6. Display all file names in a directory");
+            System.out.println("7. Count vowels in 'notes.txt'");
+            System.out.println("8. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+            sc.nextLine(); // consume newline
+
+            switch (choice) {
+                case 1:
+                    createFile(sc);
+                    break;
+                case 2:
+                    renameFile(sc);
+                    break;
+                case 3:
+                    deleteFile(sc);
+                    break;
+                case 4:
+                    createDirectory(sc);
+                    break;
+                case 5:
+                    findAbsolutePath(sc);
+                    break;
+                case 6:
+                    displayFilesInDirectory(sc);
+                    break;
+                case 7:
+                    countVowelsInNotes();
+                    break;
+                case 8:
+                    System.out.println("Exiting program... Thank you!");
+                    sc.close();
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Invalid choice! Try again.");
+            }
+        }
+    }
+
+    // ====== 1. Create a new file ======
+    public static void createFile(Scanner sc) {
+        System.out.print("Enter file name to create: ");
+        String fname = sc.nextLine();
+        try {
+            File file = new File(fname);
+            if (file.createNewFile()) {
+                System.out.println("File created successfully: " + file.getName());
+            } else {
+                System.out.println("File already exists!");
+            }
+        } catch (IOException e) {
+            System.out.println("Error occurred: " + e.getMessage());
+        }
+    }
+
+    // ====== 2. Rename file ======
+    public static void renameFile(Scanner sc) {
+        System.out.print("Enter existing file name: ");
+        String oldName = sc.nextLine();
+        System.out.print("Enter new file name: ");
+        String newName = sc.nextLine();
+        File oldFile = new File(oldName);
+        File newFile = new File(newName);
+        if (oldFile.renameTo(newFile)) {
+            System.out.println("File renamed successfully!");
+        } else {
+            System.out.println("Error renaming file!");
+        }
+    }
+
+    // ====== 3. Delete file ======
+    public static void deleteFile(Scanner sc) {
+        System.out.print("Enter file name to delete: ");
+        String delName = sc.nextLine();
+        File delFile = new File(delName);
+        if (delFile.delete()) {
+            System.out.println("File deleted successfully!");
+        } else {
+            System.out.println("File not found or could not be deleted!");
+        }
+    }
+
+    // ====== 4. Create directory ======
+    public static void createDirectory(Scanner sc) {
+        System.out.print("Enter directory name to create: ");
+        String dirName = sc.nextLine();
+        File dir = new File(dirName);
+        if (dir.mkdir()) {
+            System.out.println("Directory created successfully!");
+        } else {
+            System.out.println("Error creating directory!");
+        }
+    }
+
+    // ====== 5. Find absolute path ======
+    public static void findAbsolutePath(Scanner sc) {
+        System.out.print("Enter file name: ");
+        String absName = sc.nextLine();
+        File absFile = new File(absName);
+        System.out.println("Absolute Path: " + absFile.getAbsolutePath());
+    }
+
+    // ====== 6. Display files in directory ======
+    public static void displayFilesInDirectory(Scanner sc) {
+        System.out.print("Enter directory path: ");
+        String directory = sc.nextLine();
+        File folder = new File(directory);
+        if (folder.exists() && folder.isDirectory()) {
+            String[] files = folder.list();
+            System.out.println("Files in directory:");
+            for (String file : files) {
+                System.out.println(file);
+            }
+        } else {
+            System.out.println("Directory does not exist!");
+        }
+    }
+
+    // ====== 7. Count vowels in notes.txt ======
+    public static void countVowelsInNotes() {
+        File file = new File("notes.txt");
+        if (!file.exists()) {
+            System.out.println("File 'notes.txt' not found!");
+            return;
+        }
+
+        int totalVowels = 0;
+        Map<Character, Integer> vowelCount = new HashMap<>();
+        for (char v : "aeiou".toCharArray()) {
+            vowelCount.put(v, 0);
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            int ch;
+            while ((ch = br.read()) != -1) {
+                char c = Character.toLowerCase((char) ch);
+                if (vowelCount.containsKey(c)) {
+                    vowelCount.put(c, vowelCount.get(c) + 1);
+                    totalVowels++;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+
+        char mostFrequent = ' ';
+        int maxCount = 0;
+        for (Map.Entry<Character, Integer> entry : vowelCount.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                mostFrequent = entry.getKey();
+            }
+        }
+
+        System.out.println("\n===== Vowel Count Report =====");
+        System.out.println("Total number of vowels: " + totalVowels);
+        System.out.println("Vowel counts: " + vowelCount);
+        if (totalVowels > 0) {
+            System.out.println("Most frequent vowel: '" + mostFrequent + "' appears " + maxCount + " times.");
+        } else {
+            System.out.println("No vowels found in the file.");
+        }
+    }
+}
