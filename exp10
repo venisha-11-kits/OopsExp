@@ -1,0 +1,75 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class ArithmeticOperations extends JFrame implements ActionListener {
+    JTextField t1, t2;
+    JButton addBtn, subBtn, mulBtn, divBtn;
+
+    public ArithmeticOperations() {
+        setTitle("Swing Application");
+        setSize(300, 250);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(5, 2, 10, 10));
+
+        JLabel l1 = new JLabel("Number 1:");
+        JLabel l2 = new JLabel("Number 2:");
+
+        t1 = new JTextField();
+        t2 = new JTextField();
+
+        addBtn = new JButton("ADD");
+        subBtn = new JButton("SUBTRACT");
+        mulBtn = new JButton("MULTIPLY");
+        divBtn = new JButton("DIVIDE");
+
+        addBtn.addActionListener(this);
+        subBtn.addActionListener(this);
+        mulBtn.addActionListener(this);
+        divBtn.addActionListener(this);
+
+        add(l1); add(t1);
+        add(l2); add(t2);
+        add(addBtn); add(subBtn);
+        add(mulBtn); add(divBtn);
+
+        setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        try {
+            double num1 = Double.parseDouble(t1.getText());
+            double num2 = Double.parseDouble(t2.getText());
+            double result = 0;
+            String message = "";
+
+            if (e.getSource() == addBtn) {
+                result = num1 + num2;
+                message = "Addition: " + result;
+            } else if (e.getSource() == subBtn) {
+                result = num1 - num2;
+                message = "Subtraction: " + result;
+            } else if (e.getSource() == mulBtn) {
+                result = num1 * num2;
+                message = "Multiplication: " + result;
+            } else if (e.getSource() == divBtn) {
+                if (num2 == 0) {
+                    JOptionPane.showMessageDialog(this, "Division by zero not allowed!");
+                    return;
+                } else {
+                    result = num1 / num2;
+                    message = "Division: " + result;
+                }
+            }
+
+            JOptionPane.showMessageDialog(this, message, "Message", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter valid numbers!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void main(String[] args) {
+        new ArithmeticOperations();
+    }
+}
